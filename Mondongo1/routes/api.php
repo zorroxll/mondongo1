@@ -8,7 +8,7 @@ use App\Http\Controllers\Api\UserController;
 Route::get('/users/{id}', [UserController::class, 'show']);
 
 // Rutas de productos
-Route::apiResource('productos', ProductController::class);
+Route::apiResource('productos', ApiProductController::class);
 
 // Rutas de facturas
 Route::apiResource('facturas', FacturaController::class);
