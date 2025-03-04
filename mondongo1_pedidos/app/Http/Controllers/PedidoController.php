@@ -153,5 +153,6 @@ public function actualizarEstado(Request $request, $id)
         'pedido' => $pedido
     ]);
 }
+
 }
 
