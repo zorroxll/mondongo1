@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CocinaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,3 +19,5 @@ Route::get('/', function () {
 });
 
 require __DIR__.'/auth.php';
+
+Route::get('/cocina', [CocinaController::class, 'index'])->name('cocina.index');

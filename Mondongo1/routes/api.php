@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ApiProductController;
 use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\Api\UserController;
 //rutas user

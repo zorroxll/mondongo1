@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Product;
 
 use Illuminate\Http\Request;
 
@@ -9,7 +10,7 @@ class ApiProductController extends Controller
     // // 🟢 Obtener todos los productos
     public function index()
     {
-        return response()->json(Product::all);
+        return response()->json(Product::all());
         // Obtener todos los productos
      }
 
