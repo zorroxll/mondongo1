@@ -83,13 +83,47 @@ class PedidoController extends Controller
         }
     }
     public function index()
-{
-    $pedidos = Pedido::with('productos')->get();
-    return response()->json($pedidos);
-}
+    {
+        $pedidos = Pedido::with('productos')->get();
+    
+        // Iterar sobre cada pedido para obtener los nombres de los productos
+        foreach ($pedidos as $pedido) {
+            foreach ($pedido->productos as $producto) {
+                // Consultar API de productos
+                $response = Http::get(env('API_PRODUCTOS_URL') . '/' . $producto->producto_id);
+                
+                if ($response->successful()) {
+                    $productoData = $response->json();
+                    $producto->nombre = $productoData['nombre'] ?? 'Desconocido';
+                } else {
+                    $producto->nombre = 'No disponible';
+                }
+    
+                // Eliminar el ID para que no se muestre en la respuesta
+                unset($producto->producto_id);
+            }
+        }
+    
+        return response()->json($pedidos);
+    }
+    
 public function show($id)
 {
     $pedido = Pedido::with('productos')->findOrFail($id);
+
+    foreach ($pedido->productos as $producto) {
+        $response = Http::get(env('API_PRODUCTOS_URL') . '/' . $producto->producto_id);
+
+        if ($response->successful()) {
+            $productoData = $response->json();
+            $producto->nombre = $productoData['nombre'] ?? 'Desconocido';
+        } else {
+            $producto->nombre = 'No disponible';
+        }
+
+        unset($producto->producto_id);
+    }
+
     return response()->json($pedido);
 }
 public function update(Request $request, $id)
