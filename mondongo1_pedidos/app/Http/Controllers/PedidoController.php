@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Support\Facades\Log;
 
 use Illuminate\Http\Request;
 use App\Models\Pedido;
@@ -138,21 +139,60 @@ public function destroy($id)
     $pedido->delete();
     return response()->json(['mensaje' => 'Pedido eliminado']);
 }
+
+
 public function actualizarEstado(Request $request, $id)
 {
-    $pedido = Pedido::findOrFail($id);
-    
+    $pedido = Pedido::with('productos')->findOrFail($id);
+
     $request->validate([
         'estado' => 'required|in:pendiente,en preparación,listo,entregado',
     ]);
 
     $pedido->update(['estado' => $request->estado]);
 
+    // 🚀 Si el pedido se marca como "entregado", enviarlo a facturación
+    if ($request->estado === 'entregado') {
+        // Log para depuración
+        Log::info('Enviando pedido a facturación', ['pedido_id' => $pedido->id]);
+
+        // Construir el JSON para la API de facturación
+        $data = [
+            'user_id' => $pedido->user_id,
+            'productos' => $pedido->productos->map(function ($producto) {
+                return [
+                    'id' => $producto->producto_id,
+                    'cantidad' => $producto->cantidad,
+                    'precio_unitario' => $producto->precio_unitario,
+                ];
+            })->toArray(), // Asegurar que se envía como array
+        ];
+
+        // Log del JSON que se enviará
+        Log::info('JSON enviado a facturación:', $data);
+
+        $facturacionResponse = Http::post(env('API_FACTURACION_URL') , $data);
+        // Registrar la respuesta de la API
+        Log::info('Respuesta de API de facturación:', [
+            'status' => $facturacionResponse->status(),
+            'body' => $facturacionResponse->json()
+        ]);
+
+        if ($facturacionResponse->failed()) {
+            return response()->json([
+                'error' => 'No se pudo enviar a facturación',
+                'detalle' => $facturacionResponse->json()
+            ], 500);
+        }
+    }
+
     return response()->json([
         'mensaje' => 'Estado actualizado correctamente',
         'pedido' => $pedido
     ]);
 }
+
+
 
 }
 

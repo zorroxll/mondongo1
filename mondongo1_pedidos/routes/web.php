@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CocinaController;
+use App\Http\Controllers\ListoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,3 +22,4 @@ Route::get('/', function () {
 require __DIR__.'/auth.php';
 
 Route::get('/cocina', [CocinaController::class, 'index'])->name('cocina.index');
+Route::get('/mesero', [ListoController::class, 'index'])->name('mesero.index');

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('pedidos', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->enum('estado', ['pendiente', 'preparando', 'entregado'])->default('pendiente');
+            $table->enum('estado', ['pendiente', 'listo', 'entregado'])->default('pendiente');
             $table->decimal('total', 10, 2)->default(0);
             $table->timestamps();
         });
