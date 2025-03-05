@@ -13,7 +13,7 @@
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
             },
-            body: JSON.stringify({ estado: 'entregado' })
+            body: JSON.stringify({ estado: 'listo' })
         });
         
         if (response.ok) {

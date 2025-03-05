@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comandas - Cocina</title>
+    <title>Comandas - Mesero</title>
     <script>
        async function marcarComoListo(pedidoId) {
     try {
@@ -13,7 +13,7 @@
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
             },
-            body: JSON.stringify({ estado: 'listo' })
+            body: JSON.stringify({ estado: 'entregado' })
         });
         
         if (response.ok) {
@@ -30,7 +30,7 @@
     </script>
 </head>
 <body>
-    <h1>Comandas en Cocina</h1>
+    <h1>Comandas en mesa</h1>
     <table border="1">
         <thead>
             <tr>
@@ -56,7 +56,7 @@
                     <td>{{ $pedido->estado }}</td>
                     <td>
                         @if($pedido->estado == 'listo')
-                            <button onclick="marcarComoListo({{ $pedido->id }})">Marcar como listo</button>
+                            <button onclick="marcarComoListo({{ $pedido->id }})">Marcar como entregado</button>
                         @else
                             {{ $pedido->estado }}
                         @endif

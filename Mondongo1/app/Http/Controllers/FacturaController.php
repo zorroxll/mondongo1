@@ -16,28 +16,37 @@ class FacturaController extends Controller
     // Crear una nueva factura
     public function store(Request $request)
     {
+        // Validación de los datos de entrada
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'productos' => 'required|array',
-            'productos.*.id' => 'required|exists:products,id',
+            'productos.*.id' => 'required|exists:products,id', // Cambiado de producto_id a id
             'productos.*.cantidad' => 'required|integer|min:1',
             'productos.*.precio_unitario' => 'required|numeric|min:0',
         ]);
-
+    
+        // Crear la factura con el total calculado
         $factura = Factura::create([
             'user_id' => $request->user_id,
-            'total' => collect($request->productos)->sum(fn($p) => $p['cantidad'] * $p['precio_unitario'])
+            'total' => collect($request->productos)->sum(fn($p) => $p['cantidad'] * $p['precio_unitario']),
         ]);
-
+    
+        // Asociar los productos a la factura
         foreach ($request->productos as $producto) {
-            $factura->productos()->attach($producto['id'], [
+            $factura->productos()->attach($producto['id'], [ // Cambiado de producto_id a id
                 'cantidad' => $producto['cantidad'],
-                'precio_unitario' => $producto['precio_unitario']
+                'precio_unitario' => $producto['precio_unitario'],
             ]);
         }
-
-        return response()->json(['message' => 'Factura creada', 'factura' => $factura->load('productos')], 201);
+    
+        // Retornar la respuesta con la factura creada
+        return response()->json([
+            'message' => 'Factura creada',
+            'factura' => $factura->load('productos'),
+        ], 201);
     }
+    
+
     // Obtener una factura específica
     public function show(Factura $factura)
     {
